@@ -28,7 +28,7 @@ namespace RestApiModeloDDD.Infrastructure.Data
                     entry.Property("DataCadastro").IsModified = false;
                 }
             }
-            return SaveChanges();
+            return base.SaveChanges();
         }
 
     }
