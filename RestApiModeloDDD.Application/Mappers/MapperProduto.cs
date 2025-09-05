@@ -8,13 +8,8 @@ namespace RestApiModeloDDD.Application.Mappers
     {
         public Produto MapperDtoToEntity(ProdutoDto produtoDto)
         {
-            Produto produto = new Produto()
-            {
-                Id = produtoDto.Id,
-                Nome = produtoDto.Nome,
-                Valor = produtoDto.Valor
-            };
-
+            Produto produto = new Produto(produtoDto.Nome, produtoDto.Valor);
+            produto.Id = produtoDto.Id;
             return produto;
         }
 

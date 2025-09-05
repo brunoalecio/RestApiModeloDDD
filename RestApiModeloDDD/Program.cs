@@ -9,6 +9,7 @@ using RestApiModeloDDD.Domain.Core.Interfaces.Repositories;
 using RestApiModeloDDD.Domain.Core.Interfaces.Services;
 using RestApiModeloDDD.Domain.Services;
 using RestApiModeloDDD.Infrastructure.Data.Repositories;
+using RestApiModeloDDD.Infrastructure.Data.Repositories.MongoDb;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,14 +28,41 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<SqlContext>(options =>
-    options.UseSqlServer(connectionString)
-);
+// --- config banco ---
 
+var databaseProvider = builder.Configuration.GetValue<string>("DatabaseProvider");
+
+if (databaseProvider == "SqlServer") // Config. para SqlServer
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    builder.Services.AddDbContext<SqlContext>(options =>
+        options.UseSqlServer(connectionString)
+    );
+
+    builder.Services.AddScoped<IRepositoryCliente, RepositoryCliente>();
+    builder.Services.AddScoped<IRepositoryProduto, RepositoryProduto>();
+}
+else if (databaseProvider == "MongoDb") // Config. para mongoDb
+{
+    builder.Services.AddSingleton<NoSqlContext>();
+
+    builder.Services.AddScoped<IRepositoryCliente, RepositoryClienteMongo>();
+    builder.Services.AddScoped<IRepositoryProduto, RepositoryProdutoMongo>();
+}
+else
+{
+    throw new Exception("Provedor de banco de dados não configurado ou inválido.");
+}
+
+// Application
 builder.Services.AddScoped<IApplicationServiceCliente, ApplicationServiceCliente>();
+builder.Services.AddScoped<IApplicationServiceProduto, ApplicationServiceProduto>();
+
+// Domain
 builder.Services.AddScoped<IServiceCliente, ServiceCliente>();
-builder.Services.AddScoped<IRepositoryCliente, RepositoryCliente>();
+builder.Services.AddScoped<IServiceProduto, ServiceProduto>();
+
+// Mappers
 builder.Services.AddScoped<IMapperCliente, MapperCliente>();
 builder.Services.AddScoped<IMapperProduto, MapperProduto>();
 

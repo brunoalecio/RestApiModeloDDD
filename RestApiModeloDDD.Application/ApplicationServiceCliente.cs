@@ -38,11 +38,13 @@ namespace RestApiModeloDDD.Application
         public void Remove(ClienteDto clienteDto)
         {
             var cliente = _mapperCliente.MapperDtoToEntity(clienteDto);
+            var id_cl = cliente.Id;
             _serviceCliente.Remove(cliente);
         }
 
         public void Update(ClienteDto clienteDto)
         {
+            
             var cliente = _mapperCliente.MapperDtoToEntity(clienteDto);
             _serviceCliente.Update(cliente);
         }

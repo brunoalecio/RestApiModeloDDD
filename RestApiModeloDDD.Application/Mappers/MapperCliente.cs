@@ -9,7 +9,7 @@ namespace RestApiModeloDDD.Application.Mappers
         public Cliente MapperDtoToEntity(ClienteDto clienteDto)
         {
             Cliente cliente = new Cliente(clienteDto.Nome, clienteDto.Sobrenome, clienteDto.Email);
-            
+            cliente.Id = clienteDto.Id;
             return cliente;
         }
 

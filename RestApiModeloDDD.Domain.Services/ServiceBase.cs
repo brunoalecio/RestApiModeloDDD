@@ -1,9 +1,10 @@
 ﻿using RestApiModeloDDD.Domain.Core.Interfaces.Repositories;
 using RestApiModeloDDD.Domain.Core.Interfaces.Services;
+using RestApiModeloDDD.Domain.Entities;
 
 namespace RestApiModeloDDD.Domain.Services
 {
-    public class ServiceBase<TEntity> : IServiceBase<TEntity> where TEntity : class
+    public class ServiceBase<TEntity> : IServiceBase<TEntity> where TEntity : Base
     {
         private readonly IRepositoryBase<TEntity> _repository;
 
@@ -29,12 +30,29 @@ namespace RestApiModeloDDD.Domain.Services
 
         public void Remove(TEntity obj)
         {
-            _repository.Remove(obj);
+            var obj_banco = _repository.GetById(obj.Id);
+
+            if (obj_banco != null)
+            {
+                _repository.Remove(obj_banco);
+            }
+            else
+            {
+                throw new Exception("Cliente não encontrado!");
+            }
         }
 
         public void Update(TEntity obj)
         {
-            _repository.Update(obj);
+            if (obj.IsValido())
+            {
+                _repository.Update(obj);
+            }
+
+            if (obj == null)
+            {
+                throw new Exception("Cliente não encontrado!");
+            }
         }
     }
 }
