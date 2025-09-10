@@ -28,18 +28,10 @@ namespace RestApiModeloDDD.Domain.Services
             return _repository.GetById(id);
         }
 
-        public void Remove(TEntity obj)
+        public void Remove(int id)
         {
-            var obj_banco = _repository.GetById(obj.Id);
-
-            if (obj_banco != null)
-            {
-                _repository.Remove(obj_banco);
-            }
-            else
-            {
-                throw new Exception("Cliente não encontrado!");
-            }
+            // Apenas repassa a chamada com o id para o repositório
+            _repository.Remove(id);
         }
 
         public void Update(TEntity obj)

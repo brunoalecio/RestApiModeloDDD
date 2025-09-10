@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
+using RestApiModeloDDD.Application.Interfaces;
 using RestApiModeloDDD.Domain.Entities;
 
-public class NoSqlContext
+public class NoSqlContext : IQueryContext
 {
     private readonly IMongoDatabase _database;
 

@@ -36,17 +36,16 @@ namespace RestApiModeloDDD.Infrastructure.Data.Repositories
             return _sqlContext.Set<TEntity>().Find(id);
         }
 
-        public void Remove(TEntity obj)
+        public void Remove(int id)
         {
-            try
+            // Primeiro, busca a entidade pelo id
+            var obj = GetById(id);
+
+            if (obj != null)
             {
+                // Se encontrou, manda remover
                 _sqlContext.Set<TEntity>().Remove(obj);
                 _sqlContext.SaveChanges();
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
             }
         }
 

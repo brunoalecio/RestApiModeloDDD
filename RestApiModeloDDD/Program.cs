@@ -1,15 +1,13 @@
-
 using Microsoft.EntityFrameworkCore;
-using RestApiModeloDDD.Infrastructure.Data;
-using RestApiModeloDDD.Application;
+using Microsoft.EntityFrameworkCore.Query;
 using RestApiModeloDDD.Application.Interfaces;
 using RestApiModeloDDD.Application.Interfaces.Mappers;
 using RestApiModeloDDD.Application.Mappers;
 using RestApiModeloDDD.Domain.Core.Interfaces.Repositories;
 using RestApiModeloDDD.Domain.Core.Interfaces.Services;
 using RestApiModeloDDD.Domain.Services;
+using RestApiModeloDDD.Infrastructure.Data;
 using RestApiModeloDDD.Infrastructure.Data.Repositories;
-using RestApiModeloDDD.Infrastructure.Data.Repositories.MongoDb;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,43 +26,31 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// --- config banco ---
+// --- MediatR ---
+// Escaneia o projeto Application e registra todos os Handlers
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateClienteCommand).Assembly));
 
-var databaseProvider = builder.Configuration.GetValue<string>("DatabaseProvider");
+// --- INFRAESTRUTURA DE ESCRITA (SQL Server) ---
+var sqlConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<SqlContext>(options =>
+    options.UseSqlServer(sqlConnectionString));
 
-if (databaseProvider == "SqlServer") // Config. para SqlServer - escrita
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    builder.Services.AddDbContext<SqlContext>(options =>
-        options.UseSqlServer(connectionString)
-    );
+// --- INFRAESTRUTURA DE LEITURA (MongoDB) ---
+builder.Services.AddSingleton<NoSqlContext>();
 
-    builder.Services.AddScoped<IRepositoryCliente, RepositoryCliente>();
-    builder.Services.AddScoped<IRepositoryProduto, RepositoryProduto>();
-}
-else if (databaseProvider == "MongoDb") // Config. para mongoDb - leitura
-{
-    builder.Services.AddSingleton<NoSqlContext>();
+// --- REGISTRO DOS REPOSITÓRIOS (APENAS PARA ESCRITA) ---
+builder.Services.AddScoped<IRepositoryCliente, RepositoryCliente>();
+builder.Services.AddScoped<IRepositoryProduto, RepositoryProduto>();
 
-    builder.Services.AddScoped<IRepositoryCliente, RepositoryClienteMongo>();
-    builder.Services.AddScoped<IRepositoryProduto, RepositoryProdutoMongo>();
-}
-else
-{
-    throw new Exception("Provedor de banco de dados não configurado ou inválido.");
-}
-
-// Application
-builder.Services.AddScoped<IApplicationServiceCliente, ApplicationServiceCliente>();
-builder.Services.AddScoped<IApplicationServiceProduto, ApplicationServiceProduto>();
-
-// Domain
+// --- REGISTRO DOS SERVIÇOS DE DOMÍNIO (APENAS PARA ESCRITA) ---
 builder.Services.AddScoped<IServiceCliente, ServiceCliente>();
 builder.Services.AddScoped<IServiceProduto, ServiceProduto>();
 
-// Mappers
+// --- REGISTRO DOS MAPPERS (USADO POR AMBOS) ---
 builder.Services.AddScoped<IMapperCliente, MapperCliente>();
 builder.Services.AddScoped<IMapperProduto, MapperProduto>();
+
+builder.Services.AddScoped<IQueryContext, NoSqlContext>();
 
 var app = builder.Build();
 

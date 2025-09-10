@@ -43,9 +43,9 @@ namespace RestApiModeloDDD.Infrastructure.Data.Repositories
             _collection.ReplaceOne(c => c.Id == obj.Id, obj);
         }
 
-        public void Remove(Cliente obj)
+        public void Remove(int id)
         {
-            _collection.DeleteOne(c => c.Id == obj.Id);
+            _collection.DeleteOne(c => c.Id == id);
         }
     }
 }

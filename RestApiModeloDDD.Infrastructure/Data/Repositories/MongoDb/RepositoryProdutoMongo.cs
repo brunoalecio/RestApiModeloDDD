@@ -36,9 +36,9 @@ namespace RestApiModeloDDD.Infrastructure.Data.Repositories.MongoDb
             return _collection.Find(c => c.Id == id).FirstOrDefault();
         }
 
-        public void Remove(Produto entity)
+        public void Remove(int id)
         {
-            _collection.DeleteOne(c => c.Id == entity.Id);
+            _collection.DeleteOne(c => c.Id == id);
         }
 
         public void Update(Produto entity)

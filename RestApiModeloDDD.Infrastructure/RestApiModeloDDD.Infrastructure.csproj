@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="8.4.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
-    <PackageReference Include="MongoDB.Driver" Version="3.4.3" />
+    <PackageReference Include="MongoDB.Driver" Version="3.5.0" />
     <PackageReference Include="MongoDB.Serializer.ValueTuple" Version="1.0.0" />
   </ItemGroup>
 
@@ -17,6 +17,10 @@
     <ProjectReference Include="..\RestApiModeloDDD.Application\RestApiModeloDDD.Application.csproj" />
 	<ProjectReference Include="..\RestApiModeloDDD.Domain.Services\RestApiModeloDDD.Domain.Services.csproj" />
 
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="CrossCutting\IOC\" />
   </ItemGroup>
 
 </Project>
