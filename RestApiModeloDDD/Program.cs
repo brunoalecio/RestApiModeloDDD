@@ -32,7 +32,7 @@ builder.Services.AddSwaggerGen(options =>
 
 var databaseProvider = builder.Configuration.GetValue<string>("DatabaseProvider");
 
-if (databaseProvider == "SqlServer") // Config. para SqlServer
+if (databaseProvider == "SqlServer") // Config. para SqlServer - escrita
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     builder.Services.AddDbContext<SqlContext>(options =>
@@ -42,7 +42,7 @@ if (databaseProvider == "SqlServer") // Config. para SqlServer
     builder.Services.AddScoped<IRepositoryCliente, RepositoryCliente>();
     builder.Services.AddScoped<IRepositoryProduto, RepositoryProduto>();
 }
-else if (databaseProvider == "MongoDb") // Config. para mongoDb
+else if (databaseProvider == "MongoDb") // Config. para mongoDb - leitura
 {
     builder.Services.AddSingleton<NoSqlContext>();
 
